@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/home/carter/.local/share/virtualenvs/GroupMe_Analysis-mFDR6RWk/bin/python3"
+	}
+}
