@@ -10,8 +10,7 @@ class GroupMeAnalysis():
     def __init__(self):
         load_dotenv()
         self.token = os.getenv('GROUPME_TOKEN')
-
-        self.getAllMessages('ASEN Class of 2022')
+        #msgs = self.getAllMessages('Just Me \'n\' the Boiz')
 
     def groupIdByName(self, groupName):
 
@@ -59,24 +58,25 @@ class GroupMeAnalysis():
         while len(retMsgs) > 0:
             print('Getting messages...')
 
-            retMsgs = requests.get(self.baseURL + '/groups/' + groupId + '/messages',
-                                   params={'limit': '100', 'before_id': msgs[-1]['id'], 'token': self.token}).json()['response']['messages']
+            # Get list of messages before the most recent message
+            try:
+                retMsgs = requests.get(self.baseURL + '/groups/' + groupId + '/messages',
+                                       params={'limit': '100', 'before_id': msgs[-1]['id'], 'token': self.token}).json()['response']['messages']
+            except:
+                break
 
-            retMsgs.sort(key=lambda k: k['created_at'])
+            print('Last message ID: ' +
+                  msgs[-1]['id'] + ' created at: ' + str(msgs[-1]['created_at']))
 
-            # print([msg['created_at'] for msg in retMsgs])
+            # Sort messages in chronological order from newest to oldest
+            retMsgs.sort(key=lambda k: k['created_at'], reverse=True)
 
-            print('Received ' + str(len(retMsgs)) + ' messages')
+            print('Received ' + str(len(retMsgs)) +
+                  ' messages. Total messages received: ' + str(len(msgs)))
 
             msgs = msgs + retMsgs
 
-            if len(msgs) > 1000:
+            if len(msgs) > 30000:
                 break
 
-        # Write data to file
-        with open(input('Output file name: ') + '.json', 'w') as f:
-            json.dump(msgs, f, indent=4)
-
-
-if __name__ == '__main__':
-    app = GroupMeAnalysis()
+        return msgs
